@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
+long long convertToDecimal(char *value, int base) {
+    return strtoll(value, NULL, base);  
+}
+double lagrangeInterpolation(int *x, double *y, int n) {
+    double result = 0.0;
+    for (int i = 0; i < n; i++) {
+        double term = y[i];
+        for (int j = 0; j < n; j++) {
+            if (i != j) {
+                term = term * (0 - x[j]) / (x[i] - x[j]);
+            }
+        }
+        result += term;
+    }
+    return result;
+}
+int main() {
+    int n1 = 4, k1 = 3;
+    int x1[] = {1, 2, 3, 6};
+    char *y1_encoded[] = {"4", "111", "12", "213"};
+    int bases1[] = {10, 2, 10, 4};
+    double y1[4];
+    for (int i = 0; i < n1; i++) {
+        y1[i] = convertToDecimal(y1_encoded[i], bases1[i]);
+    }
+    double secret1 = lagrangeInterpolation(x1, y1, k1);
+    printf("Secret (Constant term) for Test Case 1: %lf\n", secret1);
+    int n2 = 9, k2 = 6;
+    int x2[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    char *y2_encoded[] = {
+        "28735619723837", "1A228867F0CA", "32811A4AA0B7B", "917978721331A", 
+        "1A22886782E1", "28735619654702", "71AB5070CC4B", "122662581541670", "642121030037605"
+    };
+    int bases2[] = {10, 16, 12, 11, 16, 10, 14, 9, 8};
+    double y2[9];
+    for (int i = 0; i < n2; i++) {
+        y2[i] = convertToDecimal(y2_encoded[i], bases2[i]);
+    }
+    double secret2 = lagrangeInterpolation(x2, y2, k2);
+    printf("Secret (Constant term) for Test Case 2: %lf\n", secret2);
+    printf("Wrong points in Test Case 2: ");
+    int wrong_points = 0;
+    for (int i = 0; i < n2; i++) {
+        double interpolated = lagrangeInterpolation(x2, y2, k2);  
+        if (fabs(interpolated - y2[i]) > 1e-5) {  
+            printf("(%d, %lf) ", x2[i], y2[i]);
+            wrong_points++;
+        }
+    }
+    if (wrong_points == 0) {
+        printf("No wrong points detected.\n");
+    }
+    return 0;
+}
